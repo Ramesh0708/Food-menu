@@ -2,16 +2,14 @@ name: Menu Photo to Teams
 
 on:
   push:
-    branches:                     # ✅ trigger on both main & master
+    branches:
       - main
-      - master
-    paths:                        # ✅ only when photos are added
-      - 'menuphotos/**'
+    paths:
+      - 'menuphotos/**'   # triggers on ANY file inside menuphotos
 
 jobs:
   post-menu:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -22,7 +20,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests pytesseract pillow
+        run: pip install -r requirements.txt
 
       - name: Run OCR & Post
         run: python menu_bot.py
