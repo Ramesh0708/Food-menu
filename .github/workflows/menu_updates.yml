@@ -25,5 +25,8 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Run OCR & Post
+           - name: Run OCR & Post
+        env:
+          TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
         run: python menu_bot.py
+
