@@ -1,0 +1,26 @@
+name: Cafeteria Menu Updates
+
+on:
+  push:
+    paths:
+      - "menu_photos/**"
+
+jobs:
+  post-menu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run OCR and post menu
+        env:
+          TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+        run: python ocr_menu.py
