@@ -1,9 +1,9 @@
-name: Cafeteria Menu Updates
+name: Menu Photo to Teams
 
 on:
   push:
     paths:
-      - "menu_photos/**"
+      - 'menuphotos/**'
 
 jobs:
   post-menu:
@@ -15,12 +15,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install requests pytesseract pillow
 
-      - name: Run OCR and post menu
-        env:
-          TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
-        run: python ocr_menu.py
+      - name: Run OCR & Post
+        run: python menu_bot.py
