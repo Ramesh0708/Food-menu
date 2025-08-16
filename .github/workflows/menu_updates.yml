@@ -2,12 +2,16 @@ name: Menu Photo to Teams
 
 on:
   push:
-    paths:
+    branches:                     # ✅ trigger on both main & master
+      - main
+      - master
+    paths:                        # ✅ only when photos are added
       - 'menuphotos/**'
 
 jobs:
   post-menu:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
