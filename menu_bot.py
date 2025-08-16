@@ -1,21 +1,38 @@
-import os, glob, pytesseract
-from PIL import Image
+import os
+import sys
 import requests
+import pytesseract
+from PIL import Image
 
+# Load Teams webhook from environment
 TEAMS_WEBHOOK = os.getenv("TEAMS_WEBHOOK")
 
-# Find latest photo
-files = glob.glob("menuphotos/*")
-latest = max(files, key=os.path.getctime)
+if not TEAMS_WEBHOOK:
+    print("❌ ERROR: TEAMS_WEBHOOK is not set in GitHub Secrets")
+    sys.exit(1)
 
-# OCR
-text = pytesseract.image_to_string(Image.open(latest))
+# OCR from image
+image_path = "menuuu.jpeg"
+text = pytesseract.image_to_string(Image.open(image_path))
 
-# Build Teams message
-message = {
-    "text": f"📋 Today's Menu\n\n{text}"
+# Clean text lines
+menu_items = []
+for line in text.splitlines():
+    line = line.strip()
+    if line and not line.lower().startswith("menu is subject"):
+        menu_items.append(line)
+
+# Format Teams message
+menu_message = "**📋 Today's Menu**\n\n" + "\n".join(f"- {item}" for item in menu_items)
+
+# Send to Teams
+payload = {
+    "text": menu_message
 }
 
-# Post to Teams
-resp = requests.post(TEAMS_WEBHOOK, json=message)
-print("Posted:", resp.status_code, resp.text)
+resp = requests.post(TEAMS_WEBHOOK, json=payload)
+
+if resp.status_code != 200:
+    print(f"❌ Failed to send message: {resp.status_code}, {resp.text}")
+else:
+    print("✅ Menu posted successfully!")
